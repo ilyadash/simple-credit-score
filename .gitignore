@@ -1,0 +1,5 @@
+*.pkl
+*.ubj
+*.tsv
+foreign_solutions/AutogluonModels/*
+foreign_solutions/catboost_info/*
