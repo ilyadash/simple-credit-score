@@ -3,3 +3,4 @@
 *.tsv
 foreign_solutions/AutogluonModels/*
 foreign_solutions/catboost_info/*
+src/catboost_info/*
