@@ -3,13 +3,16 @@ version: "3.9"
 services:
   credit-api:
     build: .
+    env_file: 
+     - path: ./.env
+       required: true # default
     container_name: credit_scoring_api
     ports:
-      - "8000:8000"
+      - "8009:8009"
     volumes:
       - sqlite_data:/app/data
     environment:
-      - DATABASE_URL=sqlite:////app/data/credit.db
+      DATABASE_PATH: {DATABASE_PATH}
     restart: unless-stopped
 
 volumes:

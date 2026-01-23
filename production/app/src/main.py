@@ -3,18 +3,18 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+from app.src.schemas import CreditRecordIn, PredictionOut
+from app.src.db import insert_credit_record, init_db
+
+@app.on_event("startup")
+def startup():
+    init_db()
+
 @app.on_event("startup")
 def load_model():
     app.state.model = joblib.load(
         "credit_default_pipeline.joblib"
     )
-
-from app.src.db import engine
-from app.src import models
-
-@app.on_event("startup")
-def startup():
-    models.Base.metadata.create_all(bind=engine)
 
 import pandas as pd
 
