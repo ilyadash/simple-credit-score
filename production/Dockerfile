@@ -43,9 +43,9 @@ COPY model/ model/
 # -------------------------------
 # Expose port
 # -------------------------------
-EXPOSE 8000
+EXPOSE 8009
 
 # -------------------------------
 # Start FastAPI (production)
 # -------------------------------
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "2"]
