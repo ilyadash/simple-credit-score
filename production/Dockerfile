@@ -48,4 +48,4 @@ EXPOSE 8009
 # -------------------------------
 # Start FastAPI (production)
 # -------------------------------
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "2"]
+CMD ["uvicorn", "app.src.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "2"]
