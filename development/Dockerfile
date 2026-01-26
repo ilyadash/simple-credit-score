@@ -43,7 +43,7 @@ COPY model/ model/
 # -------------------------------
 # Expose port for FASTapi app
 # -------------------------------
-EXPOSE 8009
+EXPOSE 8000
 
 # -------------------------------
 # Expose port for FASTapi app
@@ -53,4 +53,4 @@ EXPOSE 5678
 # -------------------------------
 # Start FastAPI (production)
 # -------------------------------
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "1"]
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

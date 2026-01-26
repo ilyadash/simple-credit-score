@@ -6,7 +6,8 @@ services:
        required: true # default
     container_name: credit_scoring_api
     ports:
-      - "8009:8009"
+      - "8000:8000"
+      - "5678:5678"
     volumes:
       - sqlite_data:/app/data
     develop:
