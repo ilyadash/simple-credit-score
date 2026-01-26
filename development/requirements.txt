@@ -21,3 +21,8 @@ joblib==1.4.2
 catboost==1.2.3
 xgboost==2.0.3
 lightgbm==4.2.0
+
+# -----------------------------
+# Debug for development
+# -----------------------------
+debugpy==1.8.19

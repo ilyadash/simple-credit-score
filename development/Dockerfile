@@ -37,15 +37,20 @@ RUN pip install --upgrade pip \
 # -------------------------------
 # Copy application code
 # -------------------------------
-COPY app/ app/
+COPY src src
 COPY model/ model/
 
 # -------------------------------
-# Expose port
+# Expose port for FASTapi app
 # -------------------------------
 EXPOSE 8009
 
 # -------------------------------
+# Expose port for FASTapi app
+# -------------------------------
+EXPOSE 5678
+
+# -------------------------------
 # Start FastAPI (production)
 # -------------------------------
-CMD ["uvicorn", "app.src.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "2"]
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8009", "--workers", "1"]
