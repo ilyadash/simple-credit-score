@@ -26,3 +26,4 @@ lightgbm==4.2.0
 # Debug for development
 # -----------------------------
 debugpy==1.8.19
+httpx==0.28.1
