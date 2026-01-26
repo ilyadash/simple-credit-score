@@ -8,7 +8,7 @@ from src.db import insert_credit_record, init_db
 async def lifespan(app: FastAPI):
     init_db()
     app.state.model = joblib.load(
-        "/app/model/credit_default_pipeline.joblib"
+        "/model/credit_default_pipeline.joblib"
     )
     yield
 
