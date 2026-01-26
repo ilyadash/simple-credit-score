@@ -9,6 +9,14 @@ services:
       - "8009:8009"
     volumes:
       - sqlite_data:/app/data
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          initial_sync: true
+        - action: rebuild
+          path: requirements.txt
     environment:
       DATABASE_PATH: ${DATABASE_PATH}
     restart: unless-stopped
