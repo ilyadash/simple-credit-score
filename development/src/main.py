@@ -8,7 +8,7 @@ from src.db import insert_credit_record, init_db
 async def lifespan(app: FastAPI):
     init_db()
     app.state.model = joblib.load(
-        "/model/credit_default_pipeline.joblib"
+        "/app/model/credit_default_pipeline.joblib"
     )
     yield
 
@@ -18,21 +18,21 @@ from src.schemas import CreditRecordIn, PredictionOut
 import pandas as pd
 
 @app.get("/test")
-def test(name: str = "Guest"):
+async def test(name: str = "Guest"):
     return {"message": f"Hello, {name} ! The server test is success!"}
 
 @app.post("/predict")
-def predict(payload: dict):
-    X = pd.DataFrame([payload])
+async def predict(payload):
+    X = pd.read_json(payload)
     proba = app.state.model.predict_proba(X)[0, 1]
     return {"default_probability": float(proba)}
 
 @app.post("/uploadfile/")
-def create_upload_file(file: UploadFile):
+async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
 
 @app.post("/load_data_from_csv")
-def load_data_from_csv(payload: dict):
+async def load_data_from_csv(payload: dict):
     X = pd.DataFrame([payload])
     proba = app.state.model.predict_proba(X)[0, 1]
     return {"default_probability": float(proba)}
