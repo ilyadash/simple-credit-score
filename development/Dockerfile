@@ -35,10 +35,14 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # -------------------------------
+# Copy our trained model
+# -------------------------------
+COPY model/ model/
+
+# -------------------------------
 # Copy application code
 # -------------------------------
 COPY src src
-COPY model/ model/
 
 # -------------------------------
 # Expose port for FASTapi app
@@ -46,11 +50,14 @@ COPY model/ model/
 EXPOSE 8000
 
 # -------------------------------
-# Expose port for FASTapi app
+# Expose port for FASTapi debug
 # -------------------------------
 EXPOSE 5678
 
 # -------------------------------
 # Start FastAPI (production)
 # -------------------------------
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+#CMD ["fastapi", "run", "app/src/main.py", "--port", "8000"]
+#CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+#CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
