@@ -3,6 +3,7 @@
 *.tsv
 *.pyc
 *.tfevents
+*.joblib
 foreign_solutions/AutogluonModels/*
 foreign_solutions/catboost_info/*
 ml_rnd/src/catboost_info/*
