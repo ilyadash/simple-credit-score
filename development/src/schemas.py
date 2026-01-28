@@ -27,6 +27,6 @@ class CreditRecord(BaseModel):
 
 
 class PredictionOut(BaseModel):
+    default: int = Field(..., example=0)
     default_probability: float = Field(..., example=0.18)
-    risk_class: str = Field(..., example="LOW")
-    record_id: Optional[int] = Field(None, example=42)
+    comment: Optional[str] = Field(None, example='Unsure result, check manually')
