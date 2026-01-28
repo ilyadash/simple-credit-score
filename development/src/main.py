@@ -1,6 +1,6 @@
 import joblib
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.testclient import TestClient
 from src.db import insert_credit_record, init_db
 
@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(debug=True, lifespan=lifespan)
 
-from src.schemas import CreditRecordIn, PredictionOut
+from src.schemas import CreditRecord, PredictionOut
 import pandas as pd
 
 @app.get("/test")
@@ -22,8 +22,8 @@ async def test(name: str = "Guest"):
     return {"message": f"Hello, {name} ! The server test is success!"}
 
 @app.post("/predict")
-async def predict(payload):
-    X = pd.read_json(payload)
+async def predict(data: CreditRecord):
+    X = pd.DataFrame([data.model_dump()])
     proba = app.state.model.predict_proba(X)[0, 1]
     return {"default_probability": float(proba)}
 

@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-class CreditRecordIn(BaseModel):
+class CreditRecord(BaseModel):
     person_age: int = Field(..., example=22)
     person_income: float = Field(..., example=59000)
     person_home_ownership: str = Field(..., example="RENT")
