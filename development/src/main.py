@@ -33,7 +33,7 @@ async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
 
 @app.post("/load_data_from_csv")
-async def load_data_from_csv(payload: dict):
+async def load_data_from_csv(payload: UploadFile = File(...)):
     X = pd.DataFrame([payload])
     proba = app.state.model.predict_proba(X)[0, 1]
     return {"default_probability": float(proba)}
