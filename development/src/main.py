@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.testclient import TestClient
 from src.db import insert_credit_record, init_db
-import my_processor
+from .my_processor import MyDataPreprocessor
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
