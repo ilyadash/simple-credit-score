@@ -10,6 +10,7 @@ services:
       - "5678:5678"
     volumes:
       - sqlite_data:/app/data
+      - vs_code_data:/app/.vscode
     develop:
       watch:
         - action: sync
@@ -26,3 +27,4 @@ services:
 
 volumes:
   sqlite_data:
+  vs_code_data:
