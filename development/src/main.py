@@ -33,7 +33,8 @@ async def predict(data: CreditRecord):
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
     proba = app.state.model.predict_proba(X)[0, 1]
-    return {"default_probability": float(proba)}
+    answer = app.state.model.predict(X)
+    return {"default_probability": float(proba), "expected_default": int(answer)}
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
