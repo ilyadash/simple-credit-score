@@ -1,9 +1,14 @@
 import joblib
+import sys
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.testclient import TestClient
 from src.db import insert_credit_record, init_db
-from .my_processor import MyDataPreprocessor
+from src.my_processor import MyDataPreprocessor
+
+# Add the app directory to Python path to resolve module imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
