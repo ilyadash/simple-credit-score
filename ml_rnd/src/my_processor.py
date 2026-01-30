@@ -11,6 +11,8 @@ class MyDataPreprocessor(TransformerMixin):
         self.scaler = RobustScaler() # StandardScaler()
         self.maximum_age = max_age
         self.max_years_of_employment = max_years_of_employment
+        self.person_emp_length_median = 0
+        self.loan_int_rate_mean = 0
 
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
         data = data.drop_duplicates()

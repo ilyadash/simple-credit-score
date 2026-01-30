@@ -11,11 +11,13 @@ class MyDataPreprocessor(TransformerMixin):
         self.scaler = RobustScaler() # StandardScaler()
         self.maximum_age = max_age
         self.max_years_of_employment = max_years_of_employment
+        self.person_emp_length_median = 0
+        self.loan_int_rate_mean = 0
 
     def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
-        data['person_emp_length'] = data['person_emp_length'].fillna(data['person_emp_length'].median())
-        data['loan_int_rate'] = data['loan_int_rate'].fillna(data['loan_int_rate'].mean())
         data = data.drop_duplicates()
+        data['person_emp_length'] = data['person_emp_length'].fillna(self.person_emp_length_median)
+        data['loan_int_rate'] = data['loan_int_rate'].fillna(self.loan_int_rate_mean)
         if 'person_age' in data.columns:
             data = data[data['person_age'] <= self.maximum_age] 
         if 'person_emp_length' in data.columns:
@@ -33,6 +35,9 @@ class MyDataPreprocessor(TransformerMixin):
         :param data: pd.DataFrame with all available columns
         :return: self
         """
+        data = data.drop_duplicates()
+        self.person_emp_length_median = data['person_emp_length'].median()
+        self.loan_int_rate_mean = data['loan_int_rate'].mean()
         data = self.preprocess_data(data)
         self.scaler = self.scaler.fit(data.to_numpy())
         return self
