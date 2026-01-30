@@ -30,6 +30,8 @@ async def test(name: str = "Guest"):
 @app.post("/predict")
 async def predict(data: CreditRecord):
     X = pd.DataFrame([data.model_dump()])
+    if 'loan_status' in X.columns:
+        X = X.drop(columns='loan_status')
     proba = app.state.model.predict_proba(X)[0, 1]
     return {"default_probability": float(proba)}
 
