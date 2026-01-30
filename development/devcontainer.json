@@ -1,0 +1,16 @@
+{
+  "name": "DEV credit-score",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy"
+      ]
+    }
+  }
+  // Optional: run commands after the container is created
+  //,"postCreateCommand": "bash welcome.sh"
+}
