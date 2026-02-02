@@ -1,4 +1,5 @@
 import json
+import requests
 import altair as alt
 import numpy as np
 import pandas as pd
@@ -10,18 +11,51 @@ load_dotenv()
 
 credit_file = st.file_uploader("Pick a file with credit data")
 
-person_age = st.slider("Pick a number", 0, 100)
-st.radio("Pick a pet", pets)
+home_ownerships = ['RENT','MORTGAGE','OWN','OTHER']
+loan_intents = ['EDUCATION','MEDICAL','VENTURE','PERSONAL','DEBTCONSOLIDATION','HOMEIMPROVEMENT']
+loan_grades = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
+MINIMUM_OF_AGE = int(os.getenv('MINIMUM_OF_AGE', default=14))
+MAXIMUM_OF_AGE = int(os.getenv('MAXIMUM_OF_AGE', default=90))
+MINIMUM_AGE_OF_WORK_STARTED = int(os.getenv('MINIMUM_AGE_OF_WORK_STARTED', default=14))
+MAXIMUM_OF_EMPLOYEMENT_YEARS = os.getenv('MAXIMUM_OF_EMPLOYEMENT_YEARS', default=(MAXIMUM_OF_AGE - MINIMUM_AGE_OF_WORK_STARTED))
 
-credit_data_dict = {"person_age": 22, "person_income": 59000,"person_home_ownership": "RENT","person_emp_length": 30.0,"loan_intent": "PERSONAL","loan_grade": "D","loan_amnt": 35000,"loan_int_rate": 16.02,"loan_percent_income": 0.59,"cb_person_default_on_file": "Y","cb_person_cred_hist_length": 3}
+person_age = st.slider(label="Person's age", min_value=MINIMUM_OF_AGE, max_value=MAXIMUM_OF_AGE, step=1)
+person_emp_length = st.slider(label="Person's employment length in years", min_value=0, max_value=MAXIMUM_OF_EMPLOYEMENT_YEARS, step=1)
+person_home_ownership = st.radio("Person's home ownership type", home_ownerships)
+person_income = st.number_input(label="Person's income", min_value=0, max_value=pow(10,8), step=1)
+cb_person_default_on_file = st.checkbox("Did person ever have a default?")
+cb_person_cred_hist_length = st.slider(label="Person's credit history length", min_value=0, max_value=100, step=1)
+loan_amnt = st.number_input(label="Loan amount", min_value=1, max_value=pow(10,8), step=1)
+loan_intent = st.radio("Person's home ownership type", loan_intents)
+loan_int_rate = st.slider(label="Loan interest rate", min_value=0, max_value=100, step=1)
+loan_grade = st.radio("Loan grade", loan_grades)
+loan_percent_income = st.slider(label="Loan percent income", min_value=0.00, max_value=1.00, step=0.01)
+
+credit_data_dict = {
+    "person_age": person_age, 
+    "person_income": person_income,
+    "person_home_ownership": person_home_ownership,
+    "person_emp_length": person_emp_length,
+    "loan_intent": loan_intent,
+    "loan_grade": loan_grade,
+    "loan_amnt": loan_amnt,
+    "loan_int_rate": loan_int_rate,
+    "loan_percent_income": loan_percent_income,
+    "cb_person_default_on_file": cb_person_default_on_file,
+    "cb_person_cred_hist_length": cb_person_cred_hist_length
+}
 credit_data = json.dumps(credit_data_dict)
 
-st.altair_chart(alt.Chart(df, height=700, width=700)
-    .mark_point(filled=True)
-    .encode(
-        x=alt.X("x", axis=None),
-        y=alt.Y("y", axis=None),
-        color=alt.Color("idx", legend=None, scale=alt.Scale()),
-        size=alt.Size("rand", legend=None, scale=alt.Scale(range=[1, 150])),
-    ))
+if st.button("Predict default!"):
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    if credit_file is None:
+        data = credit_data
+    else:
+        data = credit_file
+
+    r = requests.post('http://credit_scoring_frontend:8000/predict', headers=headers, json=data)
+    if r.status_code == 200:
+        st.write("Success")
