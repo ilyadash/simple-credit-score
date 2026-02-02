@@ -1,6 +1,6 @@
 services:
   credit-api:
-    build: .
+    build: ./backend
     env_file: 
      - path: ./.env
        required: true # default
@@ -10,21 +10,44 @@ services:
       - "5678:5678"
     volumes:
       - sqlite_data:/app/data
-      - vs_code_data:/app/.vscode
+      - vs_code_data_back:/app/.vscode
     develop:
       watch:
         - action: sync
-          path: ./src
+          path: ./backend/src
           target: /app/src
           initial_sync: true
         - action: rebuild
-          path: requirements.txt
+          path: ./backend/requirements.txt
         - action: rebuild
-          path: ./model
+          path: ./backend/model
+    environment:
+      DATABASE_PATH: ${DATABASE_PATH}
+    #restart: unless-stopped
+
+  streamlit-frontend:
+    build: ./frontend
+    env_file: 
+     - path: ./.env
+       required: true # default
+    container_name: credit_scoring_frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - vs_code_data_front:/app/.vscode
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+          initial_sync: true
+        - action: rebuild
+          path: ./frontend/requirements.txt
     environment:
       DATABASE_PATH: ${DATABASE_PATH}
     #restart: unless-stopped
 
 volumes:
   sqlite_data:
-  vs_code_data:
+  vs_code_data_back:
+  vs_code_data_front:
