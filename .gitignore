@@ -4,6 +4,7 @@
 *.pyc
 *.tfevents
 *.joblib
+.vscode/*
 development/model/*
 foreign_solutions/AutogluonModels/*
 foreign_solutions/catboost_info/*
