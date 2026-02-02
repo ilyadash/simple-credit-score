@@ -4,7 +4,7 @@
 *.pyc
 *.tfevents
 *.joblib
-development/model/credit_default_pipeline.joblib
+development/model/*
 foreign_solutions/AutogluonModels/*
 foreign_solutions/catboost_info/*
 ml_rnd/src/catboost_info/*
