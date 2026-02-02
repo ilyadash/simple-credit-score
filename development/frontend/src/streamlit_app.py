@@ -3,6 +3,10 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 credit_file = st.file_uploader("Pick a file with credit data")
 

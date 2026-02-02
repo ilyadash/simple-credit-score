@@ -41,10 +41,12 @@ services:
           path: ./frontend/src
           target: /app/src
           initial_sync: true
+        - action: sync-restart
+          path: ./env
+          target: /app/.env
+          initial_sync: true
         - action: rebuild
           path: ./frontend/requirements.txt
-    environment:
-      DATABASE_PATH: ${DATABASE_PATH}
     #restart: unless-stopped
 
 volumes:
