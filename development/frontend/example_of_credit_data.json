@@ -2,7 +2,7 @@
     "person_age": 22,
     "person_income": 59000,
     "person_home_ownership": "RENT",
-    "person_emp_length": 30.0,
+    "person_emp_length": 10.0,
     "loan_intent": "PERSONAL",
     "loan_grade": "D",
     "loan_amnt": 35000,
