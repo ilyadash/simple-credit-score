@@ -56,6 +56,8 @@ if st.button("Predict default!"):
     else:
         data = credit_file
 
-    r = requests.post('http://credit_scoring_frontend:8000/predict', headers=headers, json=data)
+    r = requests.post('http://credit_scoring_api:8000/predict', headers=headers, json=data)
     if r.status_code == 200:
         st.write("Success")
+    else:
+        st.write(f"Error:\n{r.content}")
