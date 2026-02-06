@@ -60,4 +60,4 @@ if st.button("Predict default!"):
     if r.status_code == 200:
         st.write("Success")
     else:
-        st.write(f"Error:\n{r.content}")
+        st.write(f"Error {r.status_code}:\n{r.reason}. Message:\n{r.content}")
