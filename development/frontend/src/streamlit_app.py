@@ -1,10 +1,11 @@
+import os
+import ast
 import json
 import requests
 import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -63,6 +64,13 @@ if st.button("Predict default!"):
             files={"file": credit_file}
         )
     if r.status_code == 200:
-        st.write("Success")
+        answer = ast.literal_eval(r.text)
+        probability = round(answer['default_probability']*100,2)
+        will_be_default = (answer['expected_default'] == 1)
+        decision_threshold = 50 #%
+        if abs(probability - decision_threshold) < 20:
+            st.write(f"Unsure result. Human supervision is required!")
+        st.write(f"Default probability: {probability}%")
+        st.write(f"Will loan be a default: {'Yes' if will_be_default else 'No'}")
     else:
         st.write(f"Error {r.status_code}:\n{r.reason}. Message:\n{r.content}")
