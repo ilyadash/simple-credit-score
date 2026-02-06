@@ -31,8 +31,9 @@ WORKDIR /app
 # Install Python dependencies
 # -------------------------------
 COPY requirements.txt .
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip 
+RUN pip install debugpy
+RUN pip install --no-cache-dir -r requirements.txt
 
 # -------------------------------
 # Copy our trained model
@@ -55,9 +56,15 @@ EXPOSE 8000
 EXPOSE 5678
 
 # -------------------------------
-# Start FastAPI (production)
+# Start FastAPI
 # -------------------------------
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 #CMD ["fastapi", "run", "app/src/main.py", "--port", "8000"]
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
-#CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+#CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+CMD ["python", "-m", "debugpy", \
+     "--listen", "0.0.0.0:5678", \
+     "--wait-for-client", \
+     "-m", "uvicorn", "src.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1"]
