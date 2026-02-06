@@ -51,11 +51,17 @@ if st.button("Predict default!"):
         'Content-Type': 'application/json'
     }
     if credit_file is None:
-        data = credit_data
+        data = credit_data_dict
+        r = requests.post(
+            'http://credit_scoring_api:8000/predict', 
+            headers=headers, 
+            json=data
+        )
     else:
-        data = credit_file
-
-    r = requests.post('http://credit_scoring_api:8000/predict', headers=headers, json=data)
+        r = requests.post(
+            "http://credit_scoring_api:8000/predict_file",
+            files={"file": credit_file}
+        )
     if r.status_code == 200:
         st.write("Success")
     else:
