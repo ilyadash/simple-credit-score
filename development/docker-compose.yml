@@ -33,6 +33,7 @@ services:
     container_name: credit_scoring_frontend
     ports:
       - "8501:8501"
+      - "5679:5679"
     volumes:
       - vs_code_data_front:/app/.vscode
     develop:
