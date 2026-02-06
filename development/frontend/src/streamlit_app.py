@@ -42,10 +42,9 @@ credit_data_dict = {
     "loan_amnt": loan_amnt,
     "loan_int_rate": loan_int_rate,
     "loan_percent_income": loan_percent_income,
-    "cb_person_default_on_file": cb_person_default_on_file,
+    "cb_person_default_on_file": "Y" if cb_person_default_on_file else "N",
     "cb_person_cred_hist_length": cb_person_cred_hist_length
 }
-credit_data = json.dumps(credit_data_dict)
 
 if st.button("Predict default!"):
     headers = {
