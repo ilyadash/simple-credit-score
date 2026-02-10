@@ -45,7 +45,7 @@ async def predict(data: CreditRecord):
 
 @app.post("/predict_file")
 async def predict_file(data):
-    X = pd.DataFrame([data.model_dump()])
+    X = pd.read_csv(data.model_dump())
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
     probability = app.state.model.predict_proba(X)[:, 1]
