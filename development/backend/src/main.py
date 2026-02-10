@@ -27,14 +27,33 @@ import pandas as pd
 async def test(name: str = "Guest"):
     return {"message": f"Hello, {name} ! The server test is success!"}
 
-@app.post("/predict")
+async def predict_from_dataframe(X: pd.DataFrame):
+    if 'loan_status' in X.columns:
+        X = X.drop(columns='loan_status')
+    probabilities = app.state.model.predict_proba(X)[:,0]
+    answers = app.state.model.predict(X)
+    return {"default_probability": float(probabilities), "expected_default": int(answers)}
+
+@app.post("/predict_one")
 async def predict(data: CreditRecord):
     X = pd.DataFrame([data.model_dump()])
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
-    proba = app.state.model.predict_proba(X)[0, 1]
+    probability = app.state.model.predict_proba(X)[0, 1]
     answer = app.state.model.predict(X)
-    return {"default_probability": float(proba), "expected_default": int(answer)}
+    return {"default_probability": float(probability), "expected_default": int(answer)}
+
+@app.post("/predict_file")
+async def predict_file(data):
+    X = pd.read_csv(data.model_dump())
+    if 'loan_status' in X.columns:
+        X = X.drop(columns='loan_status')
+    probability = app.state.model.predict_proba(X)[:, 1]
+    answer = app.state.model.predict(X)
+    probs_and_predictions = pd.DataFrame()
+    probs_and_predictions['default_probability'] = pd.Series(probability)
+    probs_and_predictions['pred_class'] = pd.Series(answer)
+    return probs_and_predictions.to_csv(path_or_buf=None)
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
