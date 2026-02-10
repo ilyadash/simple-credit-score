@@ -4,10 +4,10 @@
 # Pydantic schemas for request/response validation.
 # These SHOULD be kept even when using sqlite3 directly.
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
-
+# single credit record
 class CreditRecord(BaseModel):
     person_age: int = Field(..., example=22)
     person_income: float = Field(..., example=59000)
@@ -25,6 +25,9 @@ class CreditRecord(BaseModel):
 
     loan_status: Optional[int] = Field(None, example=1)
 
+# multiple credit records in json format
+class CreditFile(BaseModel):
+    records: list[CreditRecord]
 
 class PredictionOut(BaseModel):
     default: int = Field(..., example=0)

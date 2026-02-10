@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(debug=True, lifespan=lifespan)
 
-from src.schemas import CreditRecord, PredictionOut
+from src.schemas import CreditRecord, PredictionOut, CreditFile
 import pandas as pd
 
 @app.get("/test")
@@ -44,7 +44,7 @@ async def predict(data: CreditRecord):
     return {"default_probability": float(probability), "expected_default": int(answer)}
 
 @app.post("/predict_file")
-async def predict_file(data):
+async def predict_file(data: CreditFile):
     X = pd.read_csv(data.model_dump())
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
