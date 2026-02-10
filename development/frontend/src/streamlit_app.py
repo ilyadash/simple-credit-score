@@ -94,6 +94,10 @@ def predict_page_input(data) -> bool:
         return False
 
 def predict_file_input(credit_file) -> bool:
+    if credit_file is None:
+        st.write("No file provided for prediction.")
+        return False
+    
     r = requests.post(
         "http://credit_scoring_api:8000/predict_file",
         files={"file": credit_file}
