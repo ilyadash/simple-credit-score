@@ -9,3 +9,4 @@ foreign_solutions/AutogluonModels/*
 foreign_solutions/catboost_info/*
 ml_rnd/src/catboost_info/*
 ml_rnd/src/AutogluonModels/*
+development/model/credit_default_pipeline.joblib
