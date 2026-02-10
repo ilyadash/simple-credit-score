@@ -100,7 +100,7 @@ def predict_file_input(credit_file) -> bool:
     
     r = requests.post(
         "http://credit_scoring_api:8000/predict_file",
-        files={"file": credit_file}
+        files={"file": ("credit_data.csv", credit_file, "text/csv")}
     )
     if r.status_code == 200:
         st.session_state.answer_text = r.text.encode('utf8')
