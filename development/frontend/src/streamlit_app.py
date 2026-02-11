@@ -69,15 +69,13 @@ if st.session_state.step == "input_start":
     st.session_state.credit_data_file = st.file_uploader(label="Pick a file with credit data", type=["csv", "json"])
     if st.session_state.credit_data_file is not None:
         st.session_state.got_file = True
-        #bytes_data = st.session_state.credit_data_file.getvalue() # To read file as bytes
-        stringio = StringIO(st.session_state.credit_data_file.getvalue().decode("utf-8")) # To convert to a string based IO
-        st.session_state.credit_data_file_string = stringio.read() # To read file as string
         if st.session_state.credit_data_file.type == 'text/csv':
-            dataframe = pd.read_csv(st.session_state.credit_data_file, sep=',') # Can be used wherever a "file-like" object is accepted
-            st.write(dataframe)
-        elif st.session_state.credit_data_file.type == 'text/json': 
-            dataframe = pd.read_json(st.session_state.credit_data_file)
-            st.write(dataframe)
+            st.session_state.credit_data_file_df = pd.read_csv(st.session_state.credit_data_file, sep=',') # Can be used wherever a "file-like" object is accepted
+            st.write(st.session_state.credit_data_file_df)
+        elif st.session_state.credit_data_file.type == 'text/json' or st.session_state.credit_data_file.type == 'application/json': 
+            st.session_state.credit_data_file_df = pd.read_json(st.session_state.credit_data_file)
+            st.write(st.session_state.credit_data_file_df)
+
     else:
         loan_data_filling_page()
 
@@ -93,15 +91,18 @@ def predict_page_input(data) -> bool:
         st.write(f"Error {r.status_code}:\n{r.reason}. Message:\n{r.content}")
         return False
 
-def predict_file_input(credit_file) -> bool:
-    if credit_file is None:
-        st.write("No file provided for prediction.")
-        return False
-    
-    r = requests.post(
-        "http://credit_scoring_api:8000/predict_file",
-        files={"file": ("credit_data.csv", credit_file, "text/csv")}
-    )
+def predict_file_input(credit_file: pd.DataFrame) -> bool:
+    #bytes_data = credit_file.getvalue() # To read file as bytes
+    #stringio = StringIO(st.session_state.credit_data_file.getvalue().decode("utf-8")) # To convert to a string based IO
+    #st.session_state.credit_data_file_string = stringio.read() # To read file as string
+    url = "http://credit_scoring_api:8000/predict_file"
+    csv_buffer = StringIO()
+    credit_file.to_csv(csv_buffer, index=False)
+    csv_buffer.seek(0) # Перематываем буфер в начало (важно для чтения)
+    bytes_data = csv_buffer
+    files = {"file": (os.path.splitext(st.session_state.credit_data_file.name)[0]+'.csv', bytes_data, "text/csv")}
+
+    r = requests.post(url,files=files)
     if r.status_code == 200:
         st.session_state.answer_text = r.text.encode('utf8')
         return True
@@ -149,7 +150,7 @@ if st.session_state.step == "output_is_showed":
 if st.session_state.step == "predict":
     ok_result = False
     if st.session_state.got_file:
-        ok_result = predict_file_input(st.session_state.credit_data_file_string)
+        ok_result = predict_file_input(st.session_state.credit_data_file_df)
     else:
         ok_result = predict_page_input(st.session_state.credit_data_dict)
     if ok_result:

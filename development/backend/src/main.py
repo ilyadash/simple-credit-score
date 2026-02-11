@@ -2,8 +2,10 @@ import joblib
 import sys
 import os
 from contextlib import asynccontextmanager
+from io import StringIO, BytesIO
 from fastapi import FastAPI, Request, File, UploadFile
 from fastapi.testclient import TestClient
+from fastapi.responses import StreamingResponse
 from src.db import insert_credit_record, init_db
 from src.my_processor import MyDataPreprocessor
 
@@ -44,16 +46,30 @@ async def predict(data: CreditRecord):
     return {"default_probability": float(probability), "expected_default": int(answer)}
 
 @app.post("/predict_file")
-async def predict_file(data: CreditFile):
-    X = pd.read_csv(data.model_dump())
+async def predict_file(file: UploadFile = File(...)):
+    # 1. Читаем входящий файл в Pandas
+    contents = await file.read()
+    X = pd.read_csv(BytesIO(contents)) # Используем BytesIO, так как UploadFile.file — это бинарный поток
+    # 2. Подготавливаем данные перед подачей в модель
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
+    # 3. Делаем предсказание
     probability = app.state.model.predict_proba(X)[:, 1]
     answer = app.state.model.predict(X)
     probs_and_predictions = pd.DataFrame()
     probs_and_predictions['default_probability'] = pd.Series(probability)
     probs_and_predictions['pred_class'] = pd.Series(answer)
-    return probs_and_predictions.to_csv(path_or_buf=None)
+    # 4. Подготовка ответа без сохранения на диск
+    stream = StringIO()
+    probs_and_predictions.to_csv(stream, index=False)
+    
+    # Создаем ответ и добавляем заголовки для скачивания
+    response = StreamingResponse(
+        iter([stream.getvalue()]),
+        media_type="text/csv"
+    )
+    response.headers["Content-Disposition"] = f"attachment; filename=prediction_{file.filename}"
+    return response
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
