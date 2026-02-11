@@ -6,6 +6,7 @@ import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
+from io import StringIO, BytesIO
 from dotenv import load_dotenv
 from io import StringIO
 
@@ -26,8 +27,8 @@ if "step" not in st.session_state:
     st.session_state.step = "input_start"
 if "got_file" not in st.session_state:
     st.session_state.got_file = False
-if "answer_text" not in st.session_state:
-    st.session_state.answer_text = ""
+if "answer_df" not in st.session_state:
+    st.session_state.answer_df = None
 if "answer_dict" not in st.session_state:
     st.session_state.answer_dict = {}
 
@@ -104,7 +105,7 @@ def predict_file_input(credit_file: pd.DataFrame) -> bool:
 
     r = requests.post(url,files=files)
     if r.status_code == 200:
-        st.session_state.answer_text = r.text.encode('utf8')
+        st.session_state.answer_df = pd.read_csv(BytesIO(r.text.encode('utf8')))
         return True
     else:
         st.write(f"Error {r.status_code}:\n{r.reason}. Message:\n{r.content}")
@@ -115,18 +116,29 @@ if st.session_state.step == "input_start" or st.session_state.step == "input_set
         update_step("predict")
         st.rerun()
 
-if st.session_state.step == "output":
+def show_restart_button():
+    update_step("output_is_showed")
+    if st.button("Restart"):
+        update_step("input_start")
+        st.session_state.credit_data_file = None
+        st.session_state.got_file = False
+        st.rerun()
+
+if st.session_state.step == "output" or st.session_state.step == "output_is_showed":
     if st.session_state.got_file:
-        if st.session_state.answer_text != '':
-            answer_df = pd.read_csv(st.session_state.answer_text, sep=',')
+        if st.session_state.answer_df is not None:
+            answer_df = st.session_state.answer_df
             st.write(answer_df)
-            st.download_button(
+            downloaded = st.download_button(
                 label="Download CSV with predictions",
-                data=st.session_state.answer_text,
+                data=answer_df.to_csv(index=False),
                 file_name="answer.csv",
                 mime="text/csv",
                 icon=":material/download:",
+                on_click="rerun"
             )
+        else:
+            st.write(f"Error: got no answer to show!")
     else:
         probability = round(st.session_state.answer_dict['default_probability']*100,2)
         will_be_default = (st.session_state.answer_dict['expected_default'] == 1)
@@ -135,16 +147,6 @@ if st.session_state.step == "output":
             st.write(f"Unsure result. Human supervision is required!")
         st.write(f"Default probability: {probability}%")
         st.write(f"Will loan be a default: {'Yes' if will_be_default else 'No'}")
-    update_step("output_is_showed")
-
-def show_restart_button():
-    if st.button("Restart"):
-        update_step("input_start")
-        st.session_state.credit_data_file = None
-        st.session_state.got_file = False
-        st.rerun()
-
-if st.session_state.step == "output_is_showed":
     show_restart_button()
 
 if st.session_state.step == "predict":
@@ -157,6 +159,5 @@ if st.session_state.step == "predict":
         update_step("output")
         st.rerun()
     else:
-        update_step("output_is_showed")
         show_restart_button()
 
