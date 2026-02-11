@@ -13,7 +13,7 @@ services:
       - vs_code_data_back:/app/.vscode
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: ./backend/src
           target: /app/src
           initial_sync: true
