@@ -29,8 +29,8 @@ def init_db() -> None:
                 loan_percent_income REAL,
                 cb_person_default_on_file TEXT,
                 cb_person_cred_hist_length INTEGER,
-                loan_status_pred INTEGER,
-                loan_status_pred_prob REAL,
+                pred_class INTEGER,
+                default_probability REAL,
                 loan_status INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
