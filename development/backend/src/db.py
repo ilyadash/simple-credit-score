@@ -73,6 +73,12 @@ def update_loan_status(record_id: int, loan_status: int) -> None:
             (loan_status, record_id),
         )
 
+def update_loan_prediction(record_id: int, loan_status_pred: int, loan_status_pred_prob: float) -> None:
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE credit_records SET loan_status_pred = ?, loan_status_pred_prob = ? WHERE id = ?",
+            (loan_status_pred, loan_status_pred_prob, record_id),
+        )
 
 def fetch_credit_record(record_id: int) -> dict | None:
     with get_connection() as conn:
