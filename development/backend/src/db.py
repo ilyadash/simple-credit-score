@@ -6,10 +6,10 @@
 
 import os
 import sqlite3
+import pandas as pd
 from contextlib import contextmanager
 
 DB_PATH = os.getenv("DATABASE_PATH", "/data/credit.db")
-
 
 def init_db() -> None:
     """Create tables if they do not exist."""
@@ -29,6 +29,8 @@ def init_db() -> None:
                 loan_percent_income REAL,
                 cb_person_default_on_file TEXT,
                 cb_person_cred_hist_length INTEGER,
+                loan_status_pred INTEGER,
+                loan_status_pred_prob REAL,
                 loan_status INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -52,7 +54,6 @@ def get_connection():
 # -----------------------------
 # CRUD helpers
 # -----------------------------
-
 def insert_credit_record(record: dict) -> int:
     """Insert a new credit record and return its ID."""
     columns = ",".join(record.keys())
