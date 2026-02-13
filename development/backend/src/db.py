@@ -88,4 +88,42 @@ def fetch_credit_record(record_id: int) -> dict | None:
         )
         row = cur.fetchone()
         return dict(row) if row else None
+    
+def bulk_insert_credit_records(df: pd.DataFrame) -> None:
+    """
+    Bulk insert credit records in the database using a pandas DataFrame.
+    Raises:
+        ValueError: If required columns are missing from the DataFrame
+    """
+    # Verify required columns exist in the DataFrame
+    required_columns = {
+        'person_age', 'person_income', 'person_home_ownership',
+        'person_emp_length', 'loan_intent', 'loan_grade',
+        'loan_amnt', 'loan_int_rate', 'loan_status',
+        'loan_percent_income', 'cb_person_default_on_file',
+        'cb_person_cred_hist_length', 'default_probability',
+        'pred_class'
+    }
+
+    missing_columns = required_columns - set(df.columns)
+    if missing_columns:
+        raise ValueError(f"DataFrame is missing required columns: {missing_columns}")
+
+    # Convert DataFrame to list of dictionaries
+    records = df.to_dict('records')
+
+    with get_connection() as conn:
+        for record in records:
+            # Skip the 'id' column if it exists (we're doing inserts, not updates)
+            if 'id' in record:
+                del record['id']
+
+            columns = ",".join(record.keys())
+            placeholders = ",".join(["?"] * len(record))
+            values = list(record.values())
+
+            sql = f"INSERT INTO credit_records ({columns}) VALUES ({placeholders})"
+
+            conn.execute(sql, values)
+        conn.commit()
 
