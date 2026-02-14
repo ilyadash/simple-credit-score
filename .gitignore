@@ -12,3 +12,4 @@ ml_rnd/src/catboost_info/*
 ml_rnd/src/AutogluonModels/*
 development/model/credit_default_pipeline.joblib
 .gitattributes
+development/backend/data/credit.db
