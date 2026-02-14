@@ -9,8 +9,9 @@ services:
       - "8000:8000"
       - "5678:5678"
     volumes:
-      - sqlite_data:/app/data
-      - vs_code_data_back:/app/.vscode
+      - type: bind
+        source: ./backend/data
+        target: /app/data
     develop:
       watch:
         - action: sync+restart
@@ -34,8 +35,6 @@ services:
     ports:
       - "8501:8501"
       - "5679:5679"
-    volumes:
-      - vs_code_data_front:/app/.vscode
     develop:
       watch:
         - action: sync
@@ -52,5 +51,3 @@ services:
 
 volumes:
   sqlite_data:
-  vs_code_data_back:
-  vs_code_data_front:
