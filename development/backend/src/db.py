@@ -1,9 +1,3 @@
-# =============================
-# src/db.py
-# =============================
-# Minimal, explicit SQLite access layer using sqlite3.
-# Suitable for a single-instance FastAPI service.
-
 import os
 import sqlite3
 import pandas as pd
@@ -97,27 +91,30 @@ def bulk_insert_credit_records(df: pd.DataFrame) -> None:
     required_columns = [
         'person_age', 'person_income', 'person_home_ownership',
         'person_emp_length', 'loan_intent', 'loan_grade',
-        'loan_amnt', 'loan_int_rate', 'loan_status',
+        'loan_amnt', 'loan_int_rate',
         'loan_percent_income', 'cb_person_default_on_file',
         'cb_person_cred_hist_length', 'default_probability',
         'pred_class'
     ]
-
     missing_columns = set(required_columns) - set(df.columns)
-    match_columns = sorted(list(set(required_columns).intersection(set(df.columns))))
-    df = df[match_columns]
-    df.reindex(sorted(df.columns), axis='columns')
 
     if missing_columns:
         raise ValueError(f"DataFrame is missing required columns: {missing_columns}")
 
-    # Convert DataFrame to list of dictionaries
-    records = df.to_dict('records')
-
     with get_connection() as conn:
+        available_columns = []
+        data = conn.execute('SELECT * FROM credit_records LIMIT 1')
+        for column in data.description:
+            available_columns.append(column[0])
+
+        match_columns = sorted(list(set(available_columns).intersection(set(df.columns))))
+        df = df[match_columns]
+        df.reindex(sorted(df.columns), axis='columns')
+        records = df.to_dict('records') # Converts DataFrame to list of dictionaries
+
         for record in records:
             columns = ",".join(match_columns)
-            placeholders = ",".join(["?"] * len(record))
+            placeholders = ",".join(["?"] * len(match_columns))
             values = list(record.values())
 
             sql = f"INSERT INTO credit_records ({columns}) VALUES ({placeholders})"
