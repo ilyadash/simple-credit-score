@@ -38,11 +38,16 @@ async def predict_from_dataframe(X: pd.DataFrame):
 
 @app.post("/predict_one")
 async def predict(data: CreditRecord):
-    X = pd.DataFrame([data.model_dump()])
+    provided_data = pd.DataFrame([data.model_dump()])
+    X = provided_data.copy(deep=True)
     if 'loan_status' in X.columns:
         X = X.drop(columns='loan_status')
     probability = app.state.model.predict_proba(X)[0, 1]
     answer = app.state.model.predict(X)
+    processed_data = provided_data.copy(deep=True)
+    processed_data['default_probability'] = pd.Series(probability)
+    processed_data['pred_class'] = pd.Series(answer)
+    bulk_insert_credit_records(processed_data)
     return {"default_probability": float(probability), "expected_default": int(answer)}
 
 @app.post("/predict_file")
