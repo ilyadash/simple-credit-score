@@ -1,0 +1,51 @@
+services:
+  credit-api:
+    build: ./backend
+    env_file: 
+     - path: ./.env
+       required: true # default
+    container_name: ${BACK_CONTAINER_NAME}
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: ./backend/data
+        target: /app/data
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
+          initial_sync: true
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./backend/model
+    environment:
+      DATABASE_PATH: ${DATABASE_PATH}
+    #restart: unless-stopped
+
+  streamlit-frontend:
+    build: ./frontend
+    env_file: 
+     - path: ./.env
+       required: true # default
+    container_name: ${FRONT_CONTAINER_NAME}
+    ports:
+      - "8501:8501"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./frontend/src
+          target: /app/src
+          initial_sync: true
+        - action: sync+restart
+          path: ./.env
+          target: /app/.env
+          initial_sync: true
+        - action: rebuild
+          path: ./frontend/requirements.txt
+    #restart: unless-stopped
+
+volumes:
+  sqlite_data:
