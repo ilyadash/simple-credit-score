@@ -128,6 +128,7 @@ if st.session_state.step == "output" or st.session_state.step == "output_is_show
     if st.session_state.got_file:
         if st.session_state.answer_df is not None:
             answer_df = st.session_state.answer_df
+            st.write(f"Default predictions:")
             st.write(answer_df)
             downloaded = st.download_button(
                 label="Download CSV with predictions",
