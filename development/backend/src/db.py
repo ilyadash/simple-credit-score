@@ -108,7 +108,9 @@ def bulk_insert_credit_records(df: pd.DataFrame) -> None:
 
     missing_columns = set(required_columns) - set(df.columns)
     match_columns = sorted(list(set(required_columns).intersection(set(df.columns))))
-    
+    df = df[match_columns]
+    df.reindex(sorted(df.columns), axis='columns')
+
     if missing_columns:
         raise ValueError(f"DataFrame is missing required columns: {missing_columns}")
 
