@@ -14,7 +14,7 @@ services:
         target: /app/data
     develop:
       watch:
-        - action: sync+restart
+        - action: sync
           path: ./backend/src
           target: /app/src
           initial_sync: true
