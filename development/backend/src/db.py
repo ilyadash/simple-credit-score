@@ -38,7 +38,6 @@ def init_db() -> None:
         )
         conn.commit()
 
-
 @contextmanager
 def get_connection():
     """Context-managed SQLite connection."""
@@ -49,7 +48,6 @@ def get_connection():
         conn.commit()
     finally:
         conn.close()
-
 
 # -----------------------------
 # CRUD helpers
@@ -65,7 +63,6 @@ def insert_credit_record(record: dict) -> int:
     with get_connection() as conn:
         cur = conn.execute(sql, values)
         return cur.lastrowid
-
 
 def update_loan_status(record_id: int, loan_status: int) -> None:
     with get_connection() as conn:
