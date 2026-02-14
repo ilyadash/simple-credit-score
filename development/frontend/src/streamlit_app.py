@@ -17,6 +17,7 @@ MINIMUM_OF_AGE = int(os.getenv('MINIMUM_OF_AGE', default=14))
 MAXIMUM_OF_AGE = int(os.getenv('MAXIMUM_OF_AGE', default=90))
 MINIMUM_AGE_OF_WORK_STARTED = int(os.getenv('MINIMUM_AGE_OF_WORK_STARTED', default=14))
 MAXIMUM_OF_EMPLOYEMENT_YEARS = os.getenv('MAXIMUM_OF_EMPLOYEMENT_YEARS', default=(MAXIMUM_OF_AGE - MINIMUM_AGE_OF_WORK_STARTED))
+BACK_CONTAINER_NAME = os.getenv('BACK_CONTAINER_NAME', '')
 
 if "credit_data_file" not in st.session_state:
     st.session_state.credit_data_file = None
@@ -81,7 +82,7 @@ if st.session_state.step == "input_start":
 
 def predict_page_input(data) -> bool:
     r = requests.post(
-        'http://credit_scoring_api:8000/predict_one',
+        f'http://{BACK_CONTAINER_NAME}:8000/predict_one',
         json=data
     )
     if r.status_code == 200:
@@ -92,7 +93,7 @@ def predict_page_input(data) -> bool:
         return False
 
 def predict_file_input(credit_file: pd.DataFrame) -> bool:
-    url = "http://credit_scoring_api:8000/predict_file"
+    url = f"http://{BACK_CONTAINER_NAME}:8000/predict_file"
     csv_buffer = StringIO()
     credit_file.to_csv(csv_buffer, index=False)
     csv_buffer.seek(0) # Перематываем буфер в начало (важно для чтения)

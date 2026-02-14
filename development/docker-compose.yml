@@ -4,7 +4,7 @@ services:
     env_file: 
      - path: ./.env
        required: true # default
-    container_name: credit_scoring_api
+    container_name: ${BACK_CONTAINER_NAME}
     ports:
       - "8000:8000"
       - "5678:5678"
@@ -31,7 +31,7 @@ services:
     env_file: 
      - path: ./.env
        required: true # default
-    container_name: credit_scoring_frontend
+    container_name: ${FRONT_CONTAINER_NAME}
     ports:
       - "8501:8501"
       - "5679:5679"
