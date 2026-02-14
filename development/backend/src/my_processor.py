@@ -5,9 +5,6 @@ from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder
 
 class MyDataPreprocessor(TransformerMixin):
     def __init__(self, max_age:int, max_years_of_employment:int, min_age_of_employment:int):
-        """
-        :param columns_to_remove: if not None select remove these columns from the dataframe
-        """
         self.continuous_columns = ['person_income', 'person_emp_length', 'loan_amnt', 'loan_int_rate', 'loan_percent_income', 'cred_hist_to_age']
         self.categorial_columns = ['person_home_ownership', 'loan_intent', 'loan_grade', 'cb_person_default_on_file']
         self.scaler = RobustScaler() # StandardScaler()

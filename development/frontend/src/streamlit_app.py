@@ -8,7 +8,6 @@ import pandas as pd
 import streamlit as st
 from io import StringIO, BytesIO
 from dotenv import load_dotenv
-from io import StringIO
 
 load_dotenv()
 placeholder = st.empty()
@@ -93,9 +92,6 @@ def predict_page_input(data) -> bool:
         return False
 
 def predict_file_input(credit_file: pd.DataFrame) -> bool:
-    #bytes_data = credit_file.getvalue() # To read file as bytes
-    #stringio = StringIO(st.session_state.credit_data_file.getvalue().decode("utf-8")) # To convert to a string based IO
-    #st.session_state.credit_data_file_string = stringio.read() # To read file as string
     url = "http://credit_scoring_api:8000/predict_file"
     csv_buffer = StringIO()
     credit_file.to_csv(csv_buffer, index=False)
