@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(debug=True, lifespan=lifespan)
 
-from src.schemas import CreditRecord, PredictionOut, CreditFile
+from src.schemas import CreditRecord
 import pandas as pd
 
 @app.get("/test")

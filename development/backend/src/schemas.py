@@ -1,9 +1,3 @@
-# =============================
-# src/schemas.py
-# =============================
-# Pydantic schemas for request/response validation.
-# These SHOULD be kept even when using sqlite3 directly.
-
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
@@ -24,12 +18,3 @@ class CreditRecord(BaseModel):
     cb_person_cred_hist_length: int = Field(..., example=3)
 
     loan_status: Optional[int] = Field(None, example=1)
-
-# multiple credit records in json format
-class CreditFile(BaseModel):
-    records: list[CreditRecord]
-
-class PredictionOut(BaseModel):
-    default: int = Field(..., example=0)
-    default_probability: float = Field(..., example=0.18)
-    comment: Optional[str] = Field(None, example='Unsure result, check manually')
