@@ -6,6 +6,7 @@
 
 Использованные данные Kaggle: 
 https://www.kaggle.com/datasets/laotse/credit-risk-dataset
+
 Ноутбук, который был взят за основу для выбора модели: 
 https://www.kaggle.com/code/anshtanwar/credit-risk-prediction-training-and-eda
 
@@ -133,8 +134,10 @@ https://www.kaggle.com/code/anshtanwar/credit-risk-prediction-training-and-eda
 This is a machine learning project focused on credit risk prediction. The system analyzes financial data to predict the probability of default for personal loans, helping financial institutions make more informed lending decisions.
 
 Used Kaggle datasets:
-- [Credit Risk Dataset](https://www.kaggle.com/datasets/laotse/credit-risk-dataset)
-- Notebook used as a basis for model selection: [Credit Risk Prediction Training and EDA](https://www.kaggle.com/code/anshtanwar/credit-risk-prediction-training-and-eda)
+[Credit Risk Dataset](https://www.kaggle.com/datasets/laotse/credit-risk-dataset)
+
+Notebook used as a basis for model selection:
+[Credit Risk Prediction Training and EDA](https://www.kaggle.com/code/anshtanwar/credit-risk-prediction-training-and-eda)
 
 ## Key Features
 
